@@ -17,12 +17,15 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.get('/api/asteroids', async (req, res) => {
     const query = `
         SELECT 
+            a.id,
             a.name, 
+            a.nasa_jpl_url,
             a.is_potentially_hazardous,
             a.is_sentry_object,
             a.absolute_magnitude_h,
+            a.estimated_diameter_min_m,
             a.estimated_diameter_max_m,
-            c.close_approach_date, 
+            TO_CHAR(c.close_approach_date, 'YYYY-MM-DD') as close_approach_date, 
             c.miss_distance_km, 
             c.relative_velocity_kmh
         FROM close_approaches c

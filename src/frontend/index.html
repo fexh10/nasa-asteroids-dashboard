@@ -21,13 +21,13 @@
 
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card shadow-lg border-primary bg-gradient" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-width: 2px !important;">
+                <div class="card shadow-lg border-primary search-banner-card" style="border-width: 2px !important;">
                     <div class="card-body text-center p-5">
                         <h3 class="card-title text-white mb-3"><i class="bi bi-search"></i> Advanced Search & Filter</h3>
-                        <p class="text-white-50 mb-4 fs-5">Explore the complete asteroid database with advanced filtering by dates, sizes, velocities, and hazard levels</p>
-                        <a href="search.html" class="btn btn-light btn-lg px-5 py-3 shadow-sm">
+                        <p class="text-white-50 mb-4 fs-5">Explore the complete asteroid database with advanced filtering                                                                                                                                                                                           </p>
+                        <button id="open-search-modal" class="btn btn-light btn-lg px-5 py-3 shadow-sm">
                             <strong>Open Search Database</strong> →
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -79,6 +79,65 @@
                         <h6 class="text-muted mb-3">Daily Approach Count</h6>
                         <div id="chart-timeline" class="chart-container"></div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="search-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="bi bi-database"></i> Asteroid Database Explorer</h3>
+                <button id="close-modal" class="btn-close-modal">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            
+            <div class="modal-filters">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <input type="text" id="search-name" class="form-control" placeholder="Search by name...">
+                    </div>
+                    <div class="col-md-3">
+                        <select id="filter-hazard" class="form-select">
+                            <option value="">All Hazard Levels</option>
+                            <option value="hazardous">Potentially Hazardous</option>
+                            <option value="safe">Non-Hazardous</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="filter-sentry" class="form-select">
+                            <option value="">All Objects</option>
+                            <option value="sentry">Sentry Objects</option>
+                            <option value="non-sentry">Non-Sentry</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button id="reset-filters" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-counterclockwise"></i> Reset
+                        </button>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label class="form-label text-muted small"><i class="bi bi-calendar-event"></i> Date From</label>
+                        <input type="date" id="filter-date-from" class="form-control">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label text-muted small"><i class="bi bi-calendar-event"></i> Date To</label>
+                        <input type="date" id="filter-date-to" class="form-control">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button id="clear-dates" class="btn btn-outline-info w-100">
+                            <i class="bi bi-calendar-x"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div id="asteroids-list" class="asteroids-grid">
+                
                 </div>
             </div>
         </div>
