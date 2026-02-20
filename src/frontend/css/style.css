@@ -1,0 +1,37 @@
+body {
+    background-color: #1a1d29 !important;
+}
+
+.card {
+    border-radius: 12px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-card {
+    border-left: 4px solid;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.bg-body-tertiary {
+    background-color: #242838 !important;
+}
+
+.chart-container {
+    min-height: 300px;
+}

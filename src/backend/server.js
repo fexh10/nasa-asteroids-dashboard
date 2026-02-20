@@ -2,11 +2,36 @@ import express from 'express';
 import cron from 'node-cron';
 import pool from './db.js';
 import { sync_historical_data, fetch_and_save_asteroids } from './sync.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+app.get('/api/asteroids', async (req, res) => {
+    const query = `
+        SELECT 
+            a.name, 
+            a.is_potentially_hazardous,
+            a.is_sentry_object,
+            a.absolute_magnitude_h,
+            a.estimated_diameter_max_m,
+            c.close_approach_date, 
+            c.miss_distance_km, 
+            c.relative_velocity_kmh
+        FROM close_approaches c
+        JOIN asteroids a ON c.asteroid_id = a.id
+        ORDER BY c.close_approach_date ASC
+    `;
+    const result = await pool.query(query);        
+    res.json(result.rows);
+});
 
 const get_yesterday_str = () => {
     const d = new Date();
