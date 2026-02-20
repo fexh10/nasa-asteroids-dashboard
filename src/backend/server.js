@@ -46,7 +46,7 @@ const init_db = async () => {
     const res = await pool.query('SELECT COUNT(*) FROM asteroids');
     if (parseInt(res.rows[0].count) === 0) {
         console.log("Database is empty. Starting initial sync...");
-        const start_date = '2025-12-01';
+        const start_date = process.env.INITIAL_SYNC_DATE || '2025-12-01';
         await sync_historical_data(start_date);
     }
 };
