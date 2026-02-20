@@ -4,12 +4,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const db_url = process.env.DATABASE_URL;
+const is_neon = db_url && db_url.includes('neon.tech');
+
 const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
+    connectionString: db_url,
+    ssl: is_neon ? { rejectUnauthorized: false } : false
 });
 
 pool.on('connect', () => {
