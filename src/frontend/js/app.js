@@ -1,8 +1,6 @@
 let all_asteroids = [];
 let filtered_asteroids = [];
-let hazard_chart = null;
-let timeline_chart = null;
-let debounceTimer = null;
+let debounce_timer = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     await fetch_data();
@@ -18,23 +16,23 @@ async function fetch_data() {
 
 function init_modal_listeners() {
     const modal = document.getElementById('search-modal');
-    const openBtn = document.getElementById('open-search-modal');
-    const closeBtn = document.getElementById('close-modal');
-    const searchInput = document.getElementById('search-name');
-    const filterHazard = document.getElementById('filter-hazard');
-    const filterSentry = document.getElementById('filter-sentry');
-    const filterDateFrom = document.getElementById('filter-date-from');
-    const filterDateTo = document.getElementById('filter-date-to');
-    const resetBtn = document.getElementById('reset-filters');
-    const clearDatesBtn = document.getElementById('clear-dates');
+    const open_btn = document.getElementById('open-search-modal');
+    const close_btn = document.getElementById('close-modal');
+    const search_input = document.getElementById('search-name');
+    const filter_hazard = document.getElementById('filter-hazard');
+    const filter_sentry = document.getElementById('filter-sentry');
+    const filter_date_from = document.getElementById('filter-date-from');
+    const filter_date_to = document.getElementById('filter-date-to');
+    const reset_btn = document.getElementById('reset-filters');
+    const clear_dates_btn = document.getElementById('clear-dates');
 
-    openBtn.addEventListener('click', () => {
+    open_btn.addEventListener('click', () => {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         render_asteroids(filtered_asteroids);
     });
 
-    closeBtn.addEventListener('click', () => {
+    close_btn.addEventListener('click', () => {
         close_modal(modal);
     });
 
@@ -50,24 +48,24 @@ function init_modal_listeners() {
         }
     });
 
-    searchInput.addEventListener('input', debounced_apply_filters);
-    filterHazard.addEventListener('change', apply_filters);
-    filterSentry.addEventListener('change', apply_filters);
-    filterDateFrom.addEventListener('change', apply_filters);
-    filterDateTo.addEventListener('change', apply_filters);
+    search_input.addEventListener('input', debounced_apply_filters);
+    filter_hazard.addEventListener('change', apply_filters);
+    filter_sentry.addEventListener('change', apply_filters);
+    filter_date_from.addEventListener('change', apply_filters);
+    filter_date_to.addEventListener('change', apply_filters);
     
-    resetBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        filterHazard.value = '';
-        filterSentry.value = '';
-        filterDateFrom.value = '';
-        filterDateTo.value = '';
+    reset_btn.addEventListener('click', () => {
+        search_input.value = '';
+        filter_hazard.value = '';
+        filter_sentry.value = '';
+        filter_date_from.value = '';
+        filter_date_to.value = '';
         apply_filters();
     });
 
-    clearDatesBtn.addEventListener('click', () => {
-        filterDateFrom.value = '';
-        filterDateTo.value = '';
+    clear_dates_btn.addEventListener('click', () => {
+        filter_date_from.value = '';
+        filter_date_to.value = '';
         apply_filters();
     });
 }
@@ -81,8 +79,8 @@ function close_modal(modal) {
 }
 
 function debounced_apply_filters() {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
+    clearTimeout(debounce_timer);
+    debounce_timer = setTimeout(() => {
         apply_filters();
     }, 300);
 }
@@ -133,15 +131,15 @@ function render_asteroids(asteroids) {
         return;
     }
 
-    const uniqueAsteroids = {};
+    const unique_asteroids = {};
     asteroids.forEach(a => {
         const key = `${a.id}_${a.close_approach_date}`;
-        if (!uniqueAsteroids[key]) {
-            uniqueAsteroids[key] = a;
+        if (!unique_asteroids[key]) {
+            unique_asteroids[key] = a;
         }
     });
 
-    const uniqueList = Object.values(uniqueAsteroids);
+    const uniqueList = Object.values(unique_asteroids);
 
     container.innerHTML = uniqueList.map((asteroid, index) => {
         const animation_delay = index < 30 ? `animation-delay: ${index * 0.05}s` : '';
@@ -225,170 +223,4 @@ function update_statistics(data) {
     const max_date = new Date(Math.max(...dates));
     const diff = Math.ceil((max_date - min_date) / (1000 * 60 * 60 * 24));
     document.getElementById('stat-days').textContent = diff;
-}
-
-function draw_hazard_chart(data) {
-    const hazardous = data.filter(a => a.is_potentially_hazardous).length;
-    const safe = data.length - hazardous;
-    
-    const hazardousPercent = ((hazardous / data.length) * 100).toFixed(1);
-    const safePercent = ((safe / data.length) * 100).toFixed(1);
-
-    const options = {
-        series: [hazardous, safe],
-        labels: [`Potentially Hazardous (${hazardousPercent}%)`, `Non-Hazardous (${safePercent}%)`],
-        chart: { 
-            type: 'donut', 
-            height: 320, 
-            foreColor: '#a8b2d1', 
-            background: 'transparent',
-            fontFamily: 'inherit'
-        },
-        theme: { mode: 'dark' },
-        colors: ['#dc3545', '#20c997'],
-        dataLabels: { 
-            enabled: true,
-            style: {
-                fontSize: '14px',
-                fontWeight: 'bold'
-            }
-        },
-        legend: {
-            position: 'bottom',
-            fontSize: '13px'
-        },
-        plotOptions: {
-            pie: {
-                donut: {
-                    size: '65%',
-                    labels: {
-                        show: true,
-                        total: {
-                            show: true,
-                            label: 'Total Asteroids',
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            color: '#a8b2d1',
-                            formatter: function () {
-                                return data.length;
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        tooltip: {
-            y: {
-                formatter: function(val) {
-                    return val + ' asteroids';
-                }
-            }
-        }
-    };
-
-    if (hazard_chart) hazard_chart.destroy();
-    hazard_chart = new ApexCharts(document.querySelector("#chart-donut"), options);
-    hazard_chart.render();
-}
-
-function draw_timeline_chart(data) {
-    const dateGroups = {};
-    
-    data.forEach(a => {
-        const date = a.close_approach_date;
-        if (!dateGroups[date]) {
-            dateGroups[date] = { total: 0, hazardous: 0 };
-        }
-        dateGroups[date].total++;
-        if (a.is_potentially_hazardous) {
-            dateGroups[date].hazardous++;
-        }
-    });
-    const sortedDates = Object.keys(dateGroups).sort();
-    
-    const totalData = sortedDates.map(date => ({
-        x: new Date(date).getTime(),
-        y: dateGroups[date].total
-    }));
-    
-    const hazardousData = sortedDates.map(date => ({
-        x: new Date(date).getTime(),
-        y: dateGroups[date].hazardous
-    }));
-
-    const options = {
-        series: [
-            {
-                name: 'Total Approaches',
-                data: totalData
-            },
-            {
-                name: 'Hazardous',
-                data: hazardousData
-            }
-        ],
-        chart: {
-            type: 'area',
-            height: 320,
-            foreColor: '#a8b2d1',
-            background: 'transparent',
-            toolbar: { show: false },
-            fontFamily: 'inherit',
-            zoom: { enabled: false }
-        },
-        theme: { mode: 'dark' },
-        colors: ['#0d6efd', '#dc3545'],
-        dataLabels: { enabled: false },
-        stroke: {
-            curve: 'smooth',
-            width: 2
-        },
-        fill: {
-            type: 'gradient',
-            gradient: {
-                opacityFrom: 0.6,
-                opacityTo: 0.1,
-            }
-        },
-        xaxis: {
-            type: 'datetime',
-            labels: {
-                datetimeFormatter: {
-                    year: 'yyyy',
-                    month: 'MMM yyyy',
-                    day: 'dd MMM',
-                    hour: 'HH:mm'
-                }
-            }
-        },
-        yaxis: {
-            title: {
-                text: 'Number of Approaches',
-                style: { fontSize: '12px' }
-            },
-            labels: {
-                formatter: function(val) {
-                    return Math.floor(val);
-                }
-            }
-        },
-        legend: {
-            position: 'top',
-            horizontalAlign: 'right',
-            fontSize: '13px'
-        },
-        grid: {
-            borderColor: '#3a3f5c',
-            strokeDashArray: 3
-        },
-        tooltip: {
-            x: {
-                format: 'dd MMM yyyy'
-            }
-        }
-    };
-
-    if (timeline_chart) timeline_chart.destroy();
-    timeline_chart = new ApexCharts(document.querySelector("#chart-timeline"), options);
-    timeline_chart.render();
 }
