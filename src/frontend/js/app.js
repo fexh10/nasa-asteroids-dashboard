@@ -23,8 +23,10 @@ function init_modal_listeners() {
     const filter_sentry = document.getElementById('filter-sentry');
     const filter_date_from = document.getElementById('filter-date-from');
     const filter_date_to = document.getElementById('filter-date-to');
+    const filter_velocity = document.getElementById('filter-velocity');
     const reset_btn = document.getElementById('reset-filters');
     const clear_dates_btn = document.getElementById('clear-dates');
+    const clear_velocity_btn = document.getElementById('clear-velocity');
 
     open_btn.addEventListener('click', () => {
         modal.classList.add('active');
@@ -53,6 +55,7 @@ function init_modal_listeners() {
     filter_sentry.addEventListener('change', apply_filters);
     filter_date_from.addEventListener('change', apply_filters);
     filter_date_to.addEventListener('change', apply_filters);
+    filter_velocity.addEventListener('input', debounced_apply_filters);
     
     reset_btn.addEventListener('click', () => {
         search_input.value = '';
@@ -60,12 +63,18 @@ function init_modal_listeners() {
         filter_sentry.value = '';
         filter_date_from.value = '';
         filter_date_to.value = '';
+        filter_velocity.value = '';
         apply_filters();
     });
 
     clear_dates_btn.addEventListener('click', () => {
         filter_date_from.value = '';
         filter_date_to.value = '';
+        apply_filters();
+    });
+
+    clear_velocity_btn.addEventListener('click', () => {
+        filter_velocity.value = '';
         apply_filters();
     });
 }
@@ -91,6 +100,7 @@ function apply_filters() {
     const sentry_filter = document.getElementById('filter-sentry').value;
     const date_from = document.getElementById('filter-date-from').value;
     const date_to = document.getElementById('filter-date-to').value;
+    const min_velocity = document.getElementById('filter-velocity').value;
 
     filtered_asteroids = all_asteroids.filter(asteroid => {
         if (search_term && !asteroid.name.toLowerCase().includes(search_term)) {
@@ -117,9 +127,14 @@ function apply_filters() {
             return false;
         }
 
+        if (min_velocity) {
+            const asteroid_velocity = asteroid.relative_velocity_kmh ? parseFloat(asteroid.relative_velocity_kmh) : 0;
+            if (asteroid_velocity < parseFloat(min_velocity)) {
+                return false;
+            }
+        }
         return true;
     }); 
-
     render_asteroids(filtered_asteroids);
 }
 
@@ -139,9 +154,9 @@ function render_asteroids(asteroids) {
         }
     });
 
-    const uniqueList = Object.values(unique_asteroids);
+    const unique_list = Object.values(unique_asteroids);
 
-    container.innerHTML = uniqueList.map((asteroid, index) => {
+    container.innerHTML = unique_list.map((asteroid, index) => {
         const animation_delay = index < 30 ? `animation-delay: ${index * 0.05}s` : '';
         const diameter_min = asteroid.estimated_diameter_min_m ? parseFloat(asteroid.estimated_diameter_min_m).toFixed(1) : 'N/A';
         const diameter_max = asteroid.estimated_diameter_max_m ? parseFloat(asteroid.estimated_diameter_max_m).toFixed(1) : 'N/A';
