@@ -36,6 +36,12 @@
     --modal-bg: #242838;
     --asteroid-card-bg: rgba(30, 58, 138, 0.1);
     --asteroid-card-border: rgba(59, 130, 246, 0.2);
+    --info-value-color: #ffffff;
+    --info-label-color: #6b7280;
+    --info-row-color: #a8b2d1;
+    --btn-close-color: #a8b2d1;
+    --btn-close-hover-color: #ffffff;
+    --btn-close-hover-bg: rgba(255, 255, 255, 0.1);
 }
 
 [data-bs-theme="light"] {
@@ -47,6 +53,12 @@
     --modal-bg: #ffffff;
     --asteroid-card-bg: rgba(59, 130, 246, 0.05);
     --asteroid-card-border: rgba(59, 130, 246, 0.3);
+    --info-value-color: #1f2937;
+    --info-label-color: #6b7280;
+    --info-row-color: #4b5563;
+    --btn-close-color: #6b7280;
+    --btn-close-hover-color: #1f2937;
+    --btn-close-hover-bg: rgba(0, 0, 0, 0.05);
 }
 
 body {
@@ -203,7 +215,7 @@ body {
 .btn-close-modal {
     background: transparent;
     border: none;
-    color: #a8b2d1;
+    color: var(--btn-close-color);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
@@ -212,8 +224,8 @@ body {
 }
 
 .btn-close-modal:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--btn-close-hover-color);
+    background: var(--btn-close-hover-bg);
     transform: rotate(90deg);
 }
 
@@ -282,7 +294,7 @@ body {
     display: flex;
     justify-content: space-between;
     font-size: 0.9rem;
-    color: #a8b2d1;
+    color: var(--info-row-color);
 }
 
 .info-row:first-child {
@@ -303,11 +315,11 @@ body {
 
 .info-label {
     font-weight: 500;
-    color: #6b7280;
+    color: var(--info-label-color);
 }
 
 .info-value {
-    color: #fff;
+    color: var(--info-value-color);
     font-weight: 600;
 }
 
