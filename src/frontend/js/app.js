@@ -223,6 +223,9 @@ function update_dashboard(data) {
     update_statistics(data);
     draw_hazard_chart(data);
     draw_timeline_chart(data);
+    if (typeof draw_earth_3d_chart === 'function') {
+        draw_earth_3d_chart(data);
+    }
 }
 
 function update_statistics(data) {
