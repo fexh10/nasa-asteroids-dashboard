@@ -6,6 +6,8 @@
 
 > [!Note]
 > A demo version of the dashboard is available [here](https://nasa-asteroids-dashboard.onrender.com/). It is automatically deployed on Render at every push to the `main` branch, but it may take a few minutes for the changes to be reflected on the live site. Please note that the demo version uses a free-tier database, which has limited storage capacity and may not contain all the data from the production version.
+> 
+> The technical documentation for this project is available under the `docs` directory, and it is written in Italian.
 
 ---
 
