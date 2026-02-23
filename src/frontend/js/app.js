@@ -1,6 +1,9 @@
 let all_asteroids = [];
 let filtered_asteroids = [];
 let debounce_timer = null;
+const API_RATE_LIMIT_PER_SECOND = 10;
+const API_RATE_WINDOW_MS = 1000;
+let api_call_timestamps = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     await fetch_data();
@@ -8,10 +11,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function fetch_data() {
-    const res = await fetch('/api/asteroids');
-    all_asteroids = await res.json();
+    all_asteroids = await rate_limited_fetch_json('/api/asteroids');
     filtered_asteroids = [...all_asteroids];
     update_dashboard(all_asteroids);
+}
+
+async function rate_limited_fetch_json(url) {
+    const now = Date.now();
+    api_call_timestamps = api_call_timestamps.filter(ts => now - ts < API_RATE_WINDOW_MS);
+
+    if (api_call_timestamps.length >= API_RATE_LIMIT_PER_SECOND) {
+        const oldest = api_call_timestamps[0];
+        const waitMs = Math.max(0, API_RATE_WINDOW_MS - (now - oldest));
+        await sleep(waitMs);
+        return rate_limited_fetch_json(url);
+    }
+
+    api_call_timestamps.push(Date.now());
+    const res = await fetch(url);
+    if (!res.ok) {
+        throw new Error(`API request failed with status ${res.status}`);
+    }
+    return res.json();
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function init_modal_listeners() {
