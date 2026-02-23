@@ -36,6 +36,14 @@ app.get('/api/asteroids', async (req, res) => {
     res.json(result.rows);
 });
 
+app.use('/api', (req, res) => {
+    res.status(404).json({ error: 'API endpoint not found' });
+});
+
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, '../frontend/pages/404.html'));
+});
+
 const get_yesterday_str = () => {
     const d = new Date();
     d.setDate(d.getDate() - 1);
